@@ -21,37 +21,40 @@ if (!file_exists($path)) {
 $response = ['success' => false, 'error' => 'Unknown error'];
 
 // Check if a file was uploaded
-if (isset($_FILES['avatar'])) {
-    $file = $_FILES['avatar'];
-    $imageName = $file['name'];
-
-    $destination = $path . $imageName;
-
-    // Try to move the uploaded file to the destination
-    if (move_uploaded_file($file['tmp_name'], $destination)) {
-        // File upload was successful, now update the avatar name in the database
-        $db = new Database();
-
-        $whereCondition = ['id' => $userid];
-        
-        $db->update('accounts', ['avatar' => $imageName], $whereCondition);
-
-        if ($db->rowCount() > 0) {
-            $response = ['success' => true, 'message' => 'File uploaded and database updated'];
-        } else {
-            $response = ['success' => false, 'error' => 'Failed to update the database'];
-        }
-    } else {
-        $response = ['success' => false, 'error' => 'Failed to move the file'];
-    }
-} else {
+if (!isset($_FILES['avatar'])) {
     $response = ['success' => false, 'error' => 'No file uploaded'];
+    sendResponse($response);
+}
+
+$file = $_FILES['avatar'];
+$imageName = $file['name'];
+$destination = $path . $imageName;
+
+// Try to move the uploaded file to the destination
+if (!move_uploaded_file($file['tmp_name'], $destination)) {
+    $response = ['success' => false, 'error' => 'Failed to move the file'];
+    sendResponse($response);
+}
+
+// File upload was successful; now update the avatar name in the database
+$db = new Database();
+$whereCondition = ['id' => $userid];
+
+$db->update('accounts', ['avatar' => $imageName], $whereCondition);
+
+if ($db->rowCount() > 0) {
+    $response = ['success' => true, 'message' => 'File uploaded and database updated'];
+} else {
+    $response = ['success' => false, 'error' => 'Failed to update the database'];
 }
 
 // Send a JSON response
-header('Content-Type: application/json');
-echo json_encode($response);
+sendResponse($response);
 
-// Terminate the script to ensure no further output
-exit;
+// Function to send JSON response and terminate the script
+function sendResponse($response) {
+    header('Content-Type: application/json');
+    echo json_encode($response);
+    exit;
+}
 ?>

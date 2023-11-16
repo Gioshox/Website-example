@@ -30,12 +30,11 @@
     }
 
     // Check if 'id' parameter is set in the URL and validate it
-    if (isset($_GET['id'])) {
-        // Check if the 'id' parameter matches the currently signed-in user's username
-        if ($_GET['id'] != $_SESSION['username']) {
-            header("Location: ../php/profile.php");
-        }
+    // Check if the 'id' parameter matches the currently signed-in user's username
+    if (isset($_GET['id']) && $_GET['id'] != $_SESSION['username']) {
+        header("Location: ../php/profile.php");
     }
+    
     ?>
 
     <!-- Main content of the page -->
