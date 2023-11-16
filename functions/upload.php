@@ -30,19 +30,16 @@ if (isset($_FILES['avatar'])) {
     // Try to move the uploaded file to the destination
     if (move_uploaded_file($file['tmp_name'], $destination)) {
         // File upload was successful, now update the avatar name in the database
-        $sql = "UPDATE accounts SET avatar=? WHERE id=?";
-        $stmt = $conn->prepare($sql);
+        $db = new Database();
 
-        if ($stmt) {
-            $stmt->bind_param("ss", $imageName, $userid);
-            if ($stmt->execute()) {
-                $response = ['success' => true, 'message' => 'File uploaded and database updated'];
-            } else {
-                $response = ['success' => false, 'error' => 'Failed to update the database'];
-            }
-            $stmt->close();
+        $whereCondition = ['id' => $userid];
+        
+        $db->update('accounts', ['avatar' => $imageName], $whereCondition);
+
+        if ($db->rowCount() > 0) {
+            $response = ['success' => true, 'message' => 'File uploaded and database updated'];
         } else {
-            $response = ['success' => false, 'error' => 'Failed to prepare the SQL statement'];
+            $response = ['success' => false, 'error' => 'Failed to update the database'];
         }
     } else {
         $response = ['success' => false, 'error' => 'Failed to move the file'];
@@ -50,9 +47,6 @@ if (isset($_FILES['avatar'])) {
 } else {
     $response = ['success' => false, 'error' => 'No file uploaded'];
 }
-
-// Close the database connection
-$conn->close();
 
 // Send a JSON response
 header('Content-Type: application/json');

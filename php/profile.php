@@ -20,25 +20,15 @@ include_once '../functions/functions.php';
 $userid = $_SESSION['ID'];
 $username = $_SESSION['username'];
 
-// Prepare SQL statement to retrieve user's avatar
-$sql = "SELECT avatar FROM accounts WHERE id=?";
-$stmt = $conn->prepare($sql);
+$db = new Database();
 
-// Check if the SQL statement was prepared successfully
-if ($stmt) {
-    $stmt->bind_param("s", $userid);
-    $stmt->execute();
-    $stmt->bind_result($avatar);
-    $stmt->fetch();
-    $stmt->close();
-} else {
-    // Display an error message if SQL statement preparation fails
-    echo "Error in preparing the SQL statement: " . $conn->error;
-    exit;
+$db->query("SELECT avatar FROM accounts WHERE id=:id");
+$db->bind(':id', $userid);
+$result = $db->single();
+
+if ($result) {
+    $avatar = $result['avatar'];
 }
-
-// Close the database connection
-$conn->close();
 ?>
 
 <div class="container">

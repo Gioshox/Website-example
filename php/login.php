@@ -2,17 +2,20 @@
 // Start a new session or resume the existing session
 session_start();
 
-// Include database connection
+// Include the Database class
 include_once '../db/db.php';
 
 // Check if the 'username' and 'password' POST parameters are set
 if (!isset($_POST['username'], $_POST['password'])) {
-	exit('Fill in all the necessary input fields!');
+    exit('Fill in all the necessary input fields!');
 }
+
 // Check if the 'username' and 'password' POST parameters are not empty
 if (empty($_POST['username']) || empty($_POST['password'])) {
-	exit('Fill in all the necessary input fields!');
+    exit('Fill in all the necessary input fields!');
 }
+
+$db = new Database();
 
 // Check if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,24 +23,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
 
     // Prepare an SQL statement to retrieve user information by username
-    $sql = "SELECT id, username, password, email, admin FROM accounts WHERE username=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->store_result();
+    $db->query("SELECT id, username, password, email, admin FROM accounts WHERE username=:username");
+    $db->bind(':username', $username);
+
+    // Execute the query and fetch the result as an associative array
+    $result = $db->single();
 
     // Check if a user with the given username exists
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $username, $passwordhash, $email, $isadmin);
-        $stmt->fetch();
-
+    if ($result) {
         // Verify if the provided password matches the stored password hash
-        if (password_verify($password, $passwordhash)) {
+        if (password_verify($password, $result['password'])) {
             // Store user information in session variables
-            $_SESSION["ID"] = $id;
-            $_SESSION['username'] = $username;
-            $_SESSION["email"] = $email;
-            $_SESSION["admin"] = ($isadmin == 1) ? true : false;
+            $_SESSION["ID"] = $result['id'];
+            $_SESSION['username'] = $result['username'];
+            $_SESSION["email"] = $result['email'];
+            $_SESSION["admin"] = ($result['admin'] == 1) ? true : false;
 
             // Display a success message and redirect to the profile page
             echo 'Successfully signed in.';
@@ -52,11 +52,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Invalid username.";
         header("refresh:3;url=../html/login.html");
     }
-
-    // Close the prepared statement
-    $stmt->close();
 }
 
-// Close the database connection
-$conn->close();
 ?>

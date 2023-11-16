@@ -4,19 +4,25 @@ include_once '../db/db.php';
 
 // Check if email and code parameters are set in the URL
 if (isset($_GET['email'], $_GET['code'])) {
+    $email = $_GET['email'];
     // Prepare and execute the SQL query
-    if ($stmt = $conn->prepare('SELECT * FROM accounts WHERE email = ? AND activation_code = ?')) {
-        $stmt->bind_param('ss', $_GET['email'], $_GET['code']);
-        $stmt->execute();
-        $stmt->store_result();
-        
+    $db = new Database();
+
+    $db->query("SELECT * FROM accounts WHERE email=:email");
+    $db->bind(':email', $email);
+    $result = $db->single();
+    
+    if ($result) {
+        $code = $result['activation_code'];
+
         // Check if a row with the specified email and code exists
-        if ($stmt->num_rows > 0) {
+        if ($code === $_GET['code']) {
+
             // Prepare and execute an SQL query to update the activation code
-            if ($stmt = $conn->prepare('UPDATE accounts SET activation_code = ? WHERE email = ? AND activation_code = ?')) {
-                $newcode = 'activated';
-                $stmt->bind_param('sss', $newcode, $_GET['email'], $_GET['code']);
-                $stmt->execute();
+            $whereCondition = ['email' => $email];
+        
+            $db->update('accounts', ['activation_code' => "activated"], $whereCondition);
+            if ($db->rowCount() > 0) {
                 echo 'Your account is now activated! You can now <a href="../html/login.html">login</a>!';
             }
         } else {

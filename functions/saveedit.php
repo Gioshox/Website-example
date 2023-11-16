@@ -15,26 +15,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Check if the new username is different from the current username
             if ($newUsername != $_SESSION['username']) {
                 // Prepare an SQL statement to update the username
-                $muokkaussql = "UPDATE accounts SET username = ? WHERE ID = ?";
-                $stmt = $conn->prepare($muokkaussql);
+                $db = new Database();
+
+                $whereCondition = ['id' => $userid];
+                
+                $db->update('accounts', ['username' => $newUsername], $whereCondition);
                 
                 // Check if the SQL statement was prepared successfully
-                if ($stmt) {
-                    $stmt->bind_param("si", $newUsername, $userid);
-                    
-                    // Execute the SQL statement to update the username
-                    if ($stmt->execute()) {
+                if ($db->rowCount() > 0) {
                         // Update the session variable with the new username
                         $_SESSION['username'] = $newUsername;
                         
                         // Redirect to the profile page after updating
                         header("refresh:0;url=../php/profile.php");
                     } else {
-                        echo "Error: " . $stmt->error;
+                        echo "Error updating record: " . $error;
                     }
-                    $stmt->close();
                 } else {
-                    echo "Error: " . $conn->error;
+                    echo "Error: " . $error;
                 }
             } else {
                 echo "No changes were made. Redirecting in 2 seconds.";
@@ -44,5 +42,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
-}
 ?>
