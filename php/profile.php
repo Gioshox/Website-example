@@ -20,12 +20,22 @@ include_once '../functions/functions.php';
 $userid = $_SESSION['ID'];
 $username = $_SESSION['username'];
 
+// Check if the user is logged in
+if(!isUserSignedIn()) {
+    // Redirect to the login page if not
+    header('Location: ../html/login.html');
+    exit;
+}
+
+// Create a new Database object
 $db = new Database();
 
+// Prepare a SQL statement to retrieve user avatar
 $db->query("SELECT avatar FROM accounts WHERE id=:id");
 $db->bind(':id', $userid);
 $result = $db->single();
 
+// If the user has an avatar, store the avatar path in a variable
 if ($result) {
     $avatar = $result['avatar'];
 }
