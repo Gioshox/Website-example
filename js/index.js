@@ -18,8 +18,8 @@ $(document).ready(function() {
         // Determine the appropriate URL based on the form action
         if (formAction === "login") {
             url = "../php/login.php"; 
-        } else if (formAction === "") {
-            url = ""; 
+        } else if (formAction === "register") {
+            url = "../php/register.php"; 
         }
 
         // AJAX request to handle form submission
