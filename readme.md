@@ -23,7 +23,8 @@ This is an example website created for fun and educational purposes. It is not i
 1. Import the `database.sql` file into your database. You can find this file in the `db` directory.
 2. Configure the email activation system in `php/register.php`. Modify lines 50 and 55 to match your email configuration.
 3. Optionally, customize the email message in `php/register.php`. Note that changing `$activate_link` may require additional configuration.
-4. After completing these steps, your installation should be complete. If you encounter any issues, please feel free to create an issue on GitHub.
+4. To use toaster for notifications, simply run `npm i` in the terminal, preferably in the project directory where the package.json is located.
+5. After completing these steps, your installation should be complete. If you encounter any issues, please feel free to create an issue on GitHub.
 
 ## Credits
 
