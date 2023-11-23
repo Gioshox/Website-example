@@ -16,8 +16,8 @@ $(document).ready(function() {
         let url;
 
         // Determine the appropriate URL based on the form action
-        if (formAction === "") {
-            url = ""; 
+        if (formAction === "login") {
+            url = "../php/login.php"; 
         } else if (formAction === "") {
             url = ""; 
         }

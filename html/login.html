@@ -29,20 +29,20 @@
 </div>
         <div class="form-box">
             <div class="form-value">
-                <form method="post" action="../php/login.php">
+                <form class="my-form" id="loginForm" data-action="login" method="post">
                     <h2>Login</h2>
                     <div class="inputbox">
                         <ion-icon name="person-outline"></ion-icon>
-                        <input name="username" type="text" required>
-                        <label for="">Username</label>
+                        <input id="username" name="username" type="text" required>
+                        <label for="username">Username</label>
                     </div>
                     <div class="inputbox">
                         <ion-icon name="lock-closed-outline"></ion-icon>
-                        <input name="password" type="password" required>
+                        <input id="password" name="password" type="password" required>
                         <label for="">Password</label>
                     </div>
                     <div class="forget">
-                        <label for=""><input type="checkbox">Remember Me</label>
+                        <label for="remember"><input name="remember" type="checkbox">Remember Me</label>
                       
                     </div>
                     <button>Log in</button>
@@ -56,5 +56,6 @@
     </section>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="../js/index.js"></script>
 </body>
 </html>
